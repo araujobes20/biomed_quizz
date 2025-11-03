@@ -112,4 +112,172 @@
             correct: 1
           },
           {
-            question:
+            question: "Na citologia oncótica, qual alteração celular é indicativa de malignidade?",
+            options: [
+              "Aumento da relação núcleo/citoplasma e hipercromasia",
+              "Citoplasma vacuolizado e núcleo vesiculoso",
+              "Núcleo picnótico e citoplasma acidófilo",
+              "Citolise e degeneração hidrópica"
+            ],
+            correct: 0
+          },
+          {
+            question: "A principal vantagem da imunofluorescência direta é:",
+            options: [
+              "Maior especificidade na detecção de antígenos teciduais",
+              "Menor custo que a coloração de H&E",
+              "Identificar ácidos nucleicos em células vivas",
+              "Detectar mutações genéticas"
+            ],
+            correct: 0
+          },
+          {
+            question: "Qual marcador é mais associado à presença de células-tronco tumorais?",
+            options: [
+              "CD34",
+              "CD45",
+              "CD133",
+              "CD3"
+            ],
+            correct: 2
+          },
+          {
+            question: "Na bioquímica clínica, o aumento de ALT e AST sugere lesão em qual órgão?",
+            options: [
+              "Coração",
+              "Rim",
+              "Fígado",
+              "Pulmão"
+            ],
+            correct: 2
+          },
+          {
+            question: "O controle de qualidade interno em um laboratório tem como principal função:",
+            options: [
+              "Garantir rastreabilidade dos resultados",
+              "Reduzir custos operacionais",
+              "Diminuir o número de pacientes atendidos",
+              "Validar novos métodos de pesquisa"
+            ],
+            correct: 0
+          },
+          {
+            question: "A eletroforese de proteínas séricas é utilizada para:",
+            options: [
+              "Detectar anticorpos específicos",
+              "Avaliar frações proteicas e possíveis disfunções hepáticas",
+              "Medir eletrólitos séricos",
+              "Avaliar níveis de glicogênio"
+            ],
+            correct: 1
+          },
+          {
+            question: "Em um laboratório de microbiologia, o uso do meio MacConkey serve para:",
+            options: [
+              "Crescimento de fungos dermatófitos",
+              "Isolamento de bactérias Gram-positivas",
+              "Isolamento e diferenciação de bactérias Gram-negativas entéricas",
+              "Cultivo de protozoários intestinais"
+            ],
+            correct: 2
+          }
+        ];
+
+        // 🔀 Sorteia 5 perguntas aleatórias ao carregar
+        useEffect(() => {
+          const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+          setQuestions(shuffled.slice(0, 5));
+        }, []);
+
+        const handleAnswer = (index) => {
+          if (selectedAnswer !== null) return;
+          setSelectedAnswer(index);
+          if (index === questions[currentQuestion].correct) {
+            setScore(score + 1);
+          }
+        };
+
+        const nextQuestion = () => {
+          if (currentQuestion < questions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
+            setSelectedAnswer(null);
+          } else {
+            setShowResult(true);
+          }
+        };
+
+        const resetQuiz = () => {
+          const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+          setQuestions(shuffled.slice(0, 5));
+          setCurrentQuestion(0);
+          setSelectedAnswer(null);
+          setScore(0);
+          setShowResult(false);
+        };
+
+        const passed = score >= 3;
+
+        if (questions.length === 0) {
+          return React.createElement('p', null, 'Carregando perguntas...');
+        }
+
+        if (showResult) {
+          return (
+            React.createElement('div', { className: 'container' },
+              React.createElement('h1', null, passed ? '🎉 Parabéns!' : 'Quase lá!'),
+              React.createElement('p', null, `Você acertou ${score} de ${questions.length} questões.`),
+              passed
+                ? React.createElement('div', null,
+                    React.createElement('p', null, '🎁 Você ganhou um voucher! Escolha seu prêmio:'),
+                    React.createElement('ul', null,
+                      React.createElement('li', null, 'Teste de Glicemia'),
+                      React.createElement('li', null, 'Teste de Tipagem ABO-Rh'),
+                      React.createElement('li', null, 'Procedimento Estético')
+                    ),
+                    React.createElement('p', null, 'Entre em contato conosco para agendar seu prêmio!')
+                  )
+                : React.createElement('p', null, 'Você precisa acertar pelo menos 3 questões para ganhar o voucher.'),
+              React.createElement('button', { onClick: resetQuiz, className: 'next-btn reset-btn' }, 'Tentar Novamente')
+            )
+          );
+        }
+
+        return (
+          React.createElement('div', { className: 'container' },
+            React.createElement('h1', null, 'Quiz de Biomedicina'),
+            React.createElement('p', null, `${currentQuestion + 1} / ${questions.length}`),
+            React.createElement('p', null, questions[currentQuestion].question),
+            questions[currentQuestion].options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = index === questions[currentQuestion].correct;
+              let className = "option";
+              if (selectedAnswer !== null) {
+                if (isCorrect) className += " correct";
+                else if (isSelected && !isCorrect) className += " wrong";
+              }
+              return React.createElement(
+                'button',
+                {
+                  key: index,
+                  onClick: () => handleAnswer(index),
+                  className,
+                  disabled: selectedAnswer !== null
+                },
+                option
+              );
+            }),
+            selectedAnswer !== null &&
+              React.createElement(
+                'button',
+                { onClick: nextQuestion, className: 'next-btn' },
+                currentQuestion < questions.length - 1 ? 'Próxima Pergunta' : 'Ver Resultado'
+              )
+          )
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(BiomedicalQuiz));
+    </script>
+  </body>
+</html>
