@@ -4,11 +4,8 @@
     <meta charset="UTF-8" />
     <title>Quiz de Biomedicina</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Importar React e ReactDOM direto do CDN -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Importar Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
       body {
         font-family: 'Segoe UI', sans-serif;
@@ -73,133 +70,46 @@
     <div id="root"></div>
 
     <script type="text/javascript">
-      const { useState } = React;
+      const { useState, useEffect } = React;
 
       function BiomedicalQuiz() {
         const [currentQuestion, setCurrentQuestion] = useState(0);
         const [selectedAnswer, setSelectedAnswer] = useState(null);
         const [score, setScore] = useState(0);
         const [showResult, setShowResult] = useState(false);
+        const [questions, setQuestions] = useState([]);
 
-        const questions = [
+        // 🔹 Banco de questões — mais desafiadoras
+        const questionBank = [
           {
-            question: "Qual é a principal função do biomédico na área de análises clínicas?",
+            question: "Qual dessas análises laboratoriais depende da integridade das hemácias?",
             options: [
-              "Realizar cirurgias de pequeno porte",
-              "Executar e interpretar exames laboratoriais",
-              "Prescrever medicamentos aos pacientes",
-              "Fazer diagnósticos clínicos diretos"
+              "Dosagem de glicose plasmática",
+              "Hemograma completo",
+              "Dosagem de ureia sérica",
+              "Prova de função hepática"
             ],
             correct: 1
           },
           {
-            question: "Em qual área da biomedicina o profissional pode atuar com procedimentos estéticos?",
+            question: "A identificação de micro-organismos por coloração de Gram é baseada em:",
             options: [
-              "Radiologia",
-              "Banco de sangue",
-              "Estética e Cosmetologia",
-              "Citologia oncótica"
+              "Diferença na composição da parede celular bacteriana",
+              "Presença de cápsula polissacarídica",
+              "Diferença no metabolismo energético",
+              "Tamanho e forma das bactérias"
             ],
-            correct: 2
+            correct: 0
           },
           {
-            question: "O que significa o sistema ABO-Rh na tipagem sanguínea?",
+            question: "Durante um exame de tipagem sanguínea, a aglutinação no soro anti-A indica:",
             options: [
-              "Um método para medir glicemia",
-              "Sistema de classificação dos grupos sanguíneos",
-              "Técnica de análise de DNA",
-              "Exame de função hepática"
+              "Presença do antígeno B",
+              "Presença do antígeno A",
+              "Ausência de antígenos A e B",
+              "Erro técnico no teste"
             ],
             correct: 1
-          }
-        ];
-
-        const handleAnswer = (index) => {
-          if (selectedAnswer !== null) return;
-          setSelectedAnswer(index);
-          if (index === questions[currentQuestion].correct) {
-            setScore(score + 1);
-          }
-        };
-
-        const nextQuestion = () => {
-          if (currentQuestion < questions.length - 1) {
-            setCurrentQuestion(currentQuestion + 1);
-            setSelectedAnswer(null);
-          } else {
-            setShowResult(true);
-          }
-        };
-
-        const resetQuiz = () => {
-          setCurrentQuestion(0);
-          setSelectedAnswer(null);
-          setScore(0);
-          setShowResult(false);
-        };
-
-        const passed = score >= 2;
-
-        if (showResult) {
-          return (
-            React.createElement('div', { className: 'container' },
-              React.createElement('h1', null, passed ? '🎉 Parabéns!' : 'Quase lá!'),
-              React.createElement('p', null, `Você acertou ${score} de ${questions.length} questões.`),
-              passed
-                ? React.createElement('div', null,
-                    React.createElement('p', null, '🎁 Você ganhou um voucher! Escolha seu prêmio:'),
-                    React.createElement('ul', null,
-                      React.createElement('li', null, 'Teste de Glicemia'),
-                      React.createElement('li', null, 'Teste de Tipagem ABO-Rh'),
-                      React.createElement('li', null, 'Procedimento Estético')
-                    ),
-                    React.createElement('p', null, 'Entre em contato conosco para agendar seu prêmio!')
-                  )
-                : React.createElement('p', null, 'Você precisa acertar pelo menos 2 questões para ganhar o voucher.'),
-              React.createElement('button', { onClick: resetQuiz, className: 'next-btn reset-btn' }, 'Tentar Novamente')
-            )
-          );
-        }
-
-        return (
-          React.createElement('div', { className: 'container' },
-            React.createElement('h1', null, 'Quiz de Biomedicina'),
-            React.createElement('p', null, `${currentQuestion + 1} / ${questions.length}`),
-
-            React.createElement('p', null, questions[currentQuestion].question),
-
-            questions[currentQuestion].options.map((option, index) => {
-              const isSelected = selectedAnswer === index;
-              const isCorrect = index === questions[currentQuestion].correct;
-              let className = "option";
-              if (selectedAnswer !== null) {
-                if (isCorrect) className += " correct";
-                else if (isSelected && !isCorrect) className += " wrong";
-              }
-              return React.createElement(
-                'button',
-                {
-                  key: index,
-                  onClick: () => handleAnswer(index),
-                  className,
-                  disabled: selectedAnswer !== null
-                },
-                option
-              );
-            }),
-
-            selectedAnswer !== null &&
-              React.createElement(
-                'button',
-                { onClick: nextQuestion, className: 'next-btn' },
-                currentQuestion < questions.length - 1 ? 'Próxima Pergunta' : 'Ver Resultado'
-              )
-          )
-        );
-      }
-
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(React.createElement(BiomedicalQuiz));
-    </script>
-  </body>
-</html>
+          },
+          {
+            question:
