@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quiz de Biomedicina</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Importar React e ReactDOM direto do CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Importar Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+      }
+      .container {
+        max-width: 600px;
+        background: #fff;
+        margin-top: 40px;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #1e3a8a;
+      }
+      button {
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      button:hover {
+        transform: scale(1.02);
+      }
+      .option {
+        width: 100%;
+        text-align: left;
+        padding: 12px;
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        margin-top: 10px;
+        background: #f9fafb;
+      }
+      .correct {
+        border-color: #16a34a;
+        background: #dcfce7;
+      }
+      .wrong {
+        border-color: #dc2626;
+        background: #fee2e2;
+      }
+      .next-btn {
+        display: block;
+        margin: 20px auto 0;
+        padding: 10px 20px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+      }
+      .reset-btn {
+        background: #9333ea;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/javascript">
+      const { useState } = React;
+
+      function BiomedicalQuiz() {
+        const [currentQuestion, setCurrentQuestion] = useState(0);
+        const [selectedAnswer, setSelectedAnswer] = useState(null);
+        const [score, setScore] = useState(0);
+        const [showResult, setShowResult] = useState(false);
+
+        const questions = [
+          {
+            question: "Qual é a principal função do biomédico na área de análises clínicas?",
+            options: [
+              "Realizar cirurgias de pequeno porte",
+              "Executar e interpretar exames laboratoriais",
+              "Prescrever medicamentos aos pacientes",
+              "Fazer diagnósticos clínicos diretos"
+            ],
+            correct: 1
+          },
+          {
+            question: "Em qual área da biomedicina o profissional pode atuar com procedimentos estéticos?",
+            options: [
+              "Radiologia",
+              "Banco de sangue",
+              "Estética e Cosmetologia",
+              "Citologia oncótica"
+            ],
+            correct: 2
+          },
+          {
+            question: "O que significa o sistema ABO-Rh na tipagem sanguínea?",
+            options: [
+              "Um método para medir glicemia",
+              "Sistema de classificação dos grupos sanguíneos",
+              "Técnica de análise de DNA",
+              "Exame de função hepática"
+            ],
+            correct: 1
+          }
+        ];
+
+        const handleAnswer = (index) => {
+          if (selectedAnswer !== null) return;
+          setSelectedAnswer(index);
+          if (index === questions[currentQuestion].correct) {
+            setScore(score + 1);
+          }
+        };
+
+        const nextQuestion = () => {
+          if (currentQuestion < questions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
+            setSelectedAnswer(null);
+          } else {
+            setShowResult(true);
+          }
+        };
+
+        const resetQuiz = () => {
+          setCurrentQuestion(0);
+          setSelectedAnswer(null);
+          setScore(0);
+          setShowResult(false);
+        };
+
+        const passed = score >= 2;
+
+        if (showResult) {
+          return (
+            React.createElement('div', { className: 'container' },
+              React.createElement('h1', null, passed ? '🎉 Parabéns!' : 'Quase lá!'),
+              React.createElement('p', null, `Você acertou ${score} de ${questions.length} questões.`),
+              passed
+                ? React.createElement('div', null,
+                    React.createElement('p', null, '🎁 Você ganhou um voucher! Escolha seu prêmio:'),
+                    React.createElement('ul', null,
+                      React.createElement('li', null, 'Teste de Glicemia'),
+                      React.createElement('li', null, 'Teste de Tipagem ABO-Rh'),
+                      React.createElement('li', null, 'Procedimento Estético')
+                    ),
+                    React.createElement('p', null, 'Entre em contato conosco para agendar seu prêmio!')
+                  )
+                : React.createElement('p', null, 'Você precisa acertar pelo menos 2 questões para ganhar o voucher.'),
+              React.createElement('button', { onClick: resetQuiz, className: 'next-btn reset-btn' }, 'Tentar Novamente')
+            )
+          );
+        }
+
+        return (
+          React.createElement('div', { className: 'container' },
+            React.createElement('h1', null, 'Quiz de Biomedicina'),
+            React.createElement('p', null, `${currentQuestion + 1} / ${questions.length}`),
+
+            React.createElement('p', null, questions[currentQuestion].question),
+
+            questions[currentQuestion].options.map((option, index) => {
+              const isSelected = selectedAnswer === index;
+              const isCorrect = index === questions[currentQuestion].correct;
+              let className = "option";
+              if (selectedAnswer !== null) {
+                if (isCorrect) className += " correct";
+                else if (isSelected && !isCorrect) className += " wrong";
+              }
+              return React.createElement(
+                'button',
+                {
+                  key: index,
+                  onClick: () => handleAnswer(index),
+                  className,
+                  disabled: selectedAnswer !== null
+                },
+                option
+              );
+            }),
+
+            selectedAnswer !== null &&
+              React.createElement(
+                'button',
+                { onClick: nextQuestion, className: 'next-btn' },
+                currentQuestion < questions.length - 1 ? 'Próxima Pergunta' : 'Ver Resultado'
+              )
+          )
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(React.createElement(BiomedicalQuiz));
+    </script>
+  </body>
+</html>
