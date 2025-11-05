@@ -14,6 +14,8 @@
         padding: 0;
         display: flex;
         justify-content: center;
+        min-height: 100vh;
+        align-items: flex-start;
       }
       .container {
         max-width: 600px;
@@ -64,6 +66,17 @@
       .reset-btn {
         background: #9333ea;
       }
+      .score {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 20px 0;
+      }
+      .question-counter {
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
     </style>
   </head>
   <body>
@@ -79,37 +92,237 @@
         const [showResult, setShowResult] = useState(false);
         const [questions, setQuestions] = useState([]);
 
-        // 🔹 Banco de questões — mais desafiadoras
+        // 🔹 Banco de questões sobre a profissão biomédica
         const questionBank = [
           {
-            question: "Qual dessas análises laboratoriais depende da integridade das hemácias?",
+            question: "Em que ano a Biomedicina foi regulamentada como profissão no Brasil?",
             options: [
-              "Dosagem de glicose plasmática",
-              "Hemograma completo",
-              "Dosagem de ureia sérica",
-              "Prova de função hepática"
+              "1966",
+              "1979",
+              "1985",
+              "1992"
             ],
-            correct: 1
+            correct: 1,
+            explanation: "A Biomedicina foi regulamentada pela Lei Federal nº 6.684 em 3 de setembro de 1979."
           },
           {
-            question: "A identificação de micro-organismos por coloração de Gram é baseada em:",
+            question: "Qual é o órgão federal responsável pela fiscalização da profissão biomédica?",
             options: [
-              "Diferença na composição da parede celular bacteriana",
-              "Presença de cápsula polissacarídica",
-              "Diferença no metabolismo energético",
-              "Tamanho e forma das bactérias"
+              "Conselho Federal de Medicina",
+              "Conselho Federal de Biomedicina",
+              "Conselho Federal de Biologia",
+              "Conselho Federal de Farmácia"
             ],
-            correct: 0
+            correct: 1,
+            explanation: "O Conselho Federal de Biomedicina (CFBM) é o órgão responsável pela regulamentação e fiscalização da profissão."
           },
           {
-            question: "Durante um exame de tipagem sanguínea, a aglutinação no soro anti-A indica:",
+            question: "Quantas habilitações o biomédico pode ter atualmente no Brasil?",
             options: [
-              "Presença do antígeno B",
-              "Presença do antígeno A",
-              "Ausência de antígenos A e B",
-              "Erro técnico no teste"
+              "15 habilitações",
+              "25 habilitações",
+              "35 habilitações",
+              "Mais de 40 habilitações"
             ],
-            correct: 1
+            correct: 3,
+            explanation: "Atualmente, existem mais de 40 habilitações reconhecidas pelo CFBM que o biomédico pode especializar-se."
           },
           {
-            question:
+            question: "Qual destas áreas NÃO é uma habilitação reconhecida para biomédicos?",
+            options: [
+              "Análises Clínicas",
+              "Biologia Molecular",
+              "Cirurgia Geral",
+              "Citologia Oncótica"
+            ],
+            correct: 2,
+            explanation: "Cirurgia Geral não é uma habilitação da Biomedicina. É uma especialidade médica."
+          },
+          {
+            question: "O símbolo da Biomedicina contém qual elemento que representa a profissão?",
+            options: [
+              "Um microscópio e um caduceu",
+              "Uma serpente e um bastão",
+              "Um coração e um estetoscópio",
+              "Um DNA e uma bata"
+            ],
+            correct: 0,
+            explanation: "O símbolo da Biomedicina é composto por um microscópio (representando a pesquisa) e o caduceu (símbolo da saúde)."
+          },
+          {
+            question: "Qual é o dia do biomédico comemorado no Brasil?",
+            options: [
+              "20 de janeiro",
+              "15 de março",
+              "20 de novembro",
+              "25 de dezembro"
+            ],
+            correct: 0,
+            explanation: "O Dia do Biomédico é comemorado em 20 de janeiro, data de regulamentação da profissão."
+          },
+          {
+            question: "Qual destas é uma área de atuação exclusiva do biomédico?",
+            options: [
+              "Coleta de material biológico",
+              "Análises bromatológicas",
+              "Análises citopatológicas",
+              "Análises histoquímicas"
+            ],
+            correct: 2,
+            explanation: "As análises citopatológicas (estudo das células) são de atuação exclusiva do biomédico."
+          },
+          {
+            question: "O biomédico pode atuar em qual destas áreas emergentes?",
+            options: [
+              "Medicina nuclear",
+              "Genética forense",
+              "Biotecnologia",
+              "Todas as alternativas"
+            ],
+            correct: 3,
+            explanation: "O biomédico pode atuar em todas essas áreas: medicina nuclear, genética forense e biotecnologia."
+          },
+          {
+            question: "Qual o tempo mínimo de formação para se tornar um biomédico?",
+            options: [
+              "3 anos",
+              "4 anos",
+              "5 anos",
+              "6 anos"
+            ],
+            correct: 1,
+            explanation: "O curso de Biomedicina tem duração mínima de 4 anos (8 semestres)."
+          },
+          {
+            question: "Qual destes prêmios Nobel teve contribuições significativas para a Biomedicina?",
+            options: [
+              "Marie Curie - Física e Química",
+              "Alexander Fleming - Medicina",
+              "Watson e Crick - Medicina",
+              "Todos os mencionados"
+            ],
+            correct: 3,
+            explanation: "Todos tiveram contribuições fundamentais: Marie Curie (radioatividade), Fleming (penicilina), Watson e Crick (estrutura do DNA)."
+          }
+        ];
+
+        useEffect(() => {
+          setQuestions(questionBank);
+        }, []);
+
+        const handleAnswerSelect = (index) => {
+          if (selectedAnswer === null) {
+            setSelectedAnswer(index);
+            if (index === questions[currentQuestion].correct) {
+              setScore(score + 1);
+            }
+          }
+        };
+
+        const handleNextQuestion = () => {
+          if (currentQuestion < questions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
+            setSelectedAnswer(null);
+          } else {
+            setShowResult(true);
+          }
+        };
+
+        const handleResetQuiz = () => {
+          setCurrentQuestion(0);
+          setSelectedAnswer(null);
+          setScore(0);
+          setShowResult(false);
+        };
+
+        const getOptionClass = (index) => {
+          if (selectedAnswer === null) return "option";
+          if (index === questions[currentQuestion].correct) {
+            return "option correct";
+          }
+          if (index === selectedAnswer && index !== questions[currentQuestion].correct) {
+            return "option wrong";
+          }
+          return "option";
+        };
+
+        if (questions.length === 0) {
+          return React.createElement('div', { className: 'container' }, 'Carregando...');
+        }
+
+        if (showResult) {
+          return React.createElement(
+            'div',
+            { className: 'container' },
+            React.createElement('h1', null, 'Resultado do Quiz'),
+            React.createElement('div', { className: 'score' }, 
+              `Você acertou ${score} de ${questions.length} questões!`),
+            React.createElement('p', { style: { textAlign: 'center', color: '#6b7280' } },
+              score >= 8 ? '🎉 Excelente! Você conhece bem a Biomedicina!' :
+              score >= 5 ? '👍 Bom conhecimento! Continue aprendendo!' :
+              '📚 Hmm... Que tal revisar mais sobre a profissão?'
+            ),
+            React.createElement(
+              'button',
+              { 
+                className: 'next-btn reset-btn',
+                onClick: handleResetQuiz
+              },
+              'Fazer Quiz Novamente'
+            )
+          );
+        }
+
+        return React.createElement(
+          'div',
+          { className: 'container' },
+          React.createElement('h1', null, 'Quiz da Biomedicina'),
+          React.createElement(
+            'div',
+            null,
+            React.createElement('div', { className: 'question-counter' }, 
+              `Questão ${currentQuestion + 1} de ${questions.length}`),
+            React.createElement('p', { style: { fontSize: '18px', fontWeight: 'bold' } }, 
+              questions[currentQuestion].question),
+            questions[currentQuestion].options.map((option, index) =>
+              React.createElement(
+                'button',
+                {
+                  key: index,
+                  className: getOptionClass(index),
+                  onClick: () => handleAnswerSelect(index),
+                  disabled: selectedAnswer !== null
+                },
+                option
+              )
+            ),
+            selectedAnswer !== null &&
+              React.createElement(
+                'div',
+                null,
+                React.createElement('p', { 
+                  style: { 
+                    marginTop: '15px', 
+                    padding: '10px', 
+                    backgroundColor: '#f3f4f6',
+                    borderRadius: '8px',
+                    fontSize: '14px'
+                  } 
+                }, `💡 ${questions[currentQuestion].explanation}`),
+                React.createElement(
+                  'button',
+                  {
+                    className: 'next-btn',
+                    onClick: handleNextQuestion
+                  },
+                  currentQuestion === questions.length - 1 ? 'Ver Resultado' : 'Próxima Questão'
+                )
+              )
+          )
+        );
+      }
+
+      ReactDOM.render(React.createElement(BiomedicalQuiz), document.getElementById('root'));
+    </script>
+  </body>
+</html>
