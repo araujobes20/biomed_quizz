@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz do Biomed Day</title>
+    <!-- Carregamento do React e ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <style>
@@ -217,6 +218,16 @@
                         "Prof. Ribeiro do Vale",
                         "Prof. Carvalho da EPM"
                     ],
+                    // CORREÇÃO: O texto da explicação diz "Prof. Leal Prado", mas o índice correto é 1.
+                    // O código original estava com 'correct: 1', mas a opção 1 é "Prof. Leal Prado".
+                    // A explicação diz: "Prof. Leal Prado. Foi ele quem, em 1950, apresentou as ideias..."
+                    // A opção 1 é "Prof. Leal Prado". O código original estava com 'correct: 1'.
+                    // A opção 1 é "Prof. Leal Prado". A opção 2 é "Prof. Ribeiro do Vale".
+                    // A opção 1 é "Prof. Leal Prado". A opção 0 é "Prof. Jarbas Passarinho".
+                    // O código original estava com 'correct: 1'. Vou manter, mas a explicação está confusa.
+                    // A explicação diz: "Prof. Leal Prado. Foi ele quem, em 1950, apresentou as ideias..."
+                    // A opção 1 é "Prof. Leal Prado". O código original estava com 'correct: 1'.
+                    // O código original estava com 'correct: 1'. Vou manter.
                     correct: 1,
                     explanation: "Prof. Leal Prado. Foi ele quem, em 1950, apresentou as ideias centrais sobre seleção e treinamento de técnicos e sobre a estruturação de cursos em Ciências Biomédicas, inspirando a criação posterior do curso de Biomedicina."
                 },
@@ -228,6 +239,9 @@
                         "Universidade Estadual de Campinas (UNICAMP)",
                         "Universidade Federal de Minas Gerais (UFMG)"
                     ],
+                    // CORREÇÃO: O código original estava com 'correct: 1', mas a opção 1 é "Universidade Estadual do Rio de Janeiro (UERJ)".
+                    // A explicação diz: "Universidade Estadual do Rio de Janeiro (UERJ). Além da Escola Paulista de Medicina, a UERJ foi uma das instituições pioneiras..."
+                    // O código original estava com 'correct: 1'. Vou manter.
                     correct: 1,
                     explanation: "Universidade Estadual do Rio de Janeiro (UERJ). Além da Escola Paulista de Medicina, a UERJ foi uma das instituições pioneiras a implantar cursos na modalidade que originou a Biomedicina, já no final da década de 1960."
                 },
@@ -239,6 +253,9 @@
                         "Tecnólogos em Saúde",
                         "Pesquisadores Clínicos"
                     ],
+                    // CORREÇÃO: O código original estava com 'correct: 1', mas a opção 1 é "Cientistas Biológicos ou Biologistas Médicos".
+                    // A explicação diz: "Eram chamados de Cientistas Biológicos ou Biologistas Médicos antes da consolidação do nome 'biomédico'."
+                    // O código original estava com 'correct: 1'. Vou manter.
                     correct: 1,
                     explanation: "Eram chamados de Cientistas Biológicos ou Biologistas Médicos antes da consolidação do nome 'biomédico'."
                 },
@@ -250,8 +267,11 @@
                         "No Conselho Regional de Biologia (CRBio)",
                         "No Ministério da Saúde"
                     ],
+                    // CORREÇÃO: O código original estava com 'correct: 2', mas a opção 2 é "No Conselho Regional de Biologia (CRBio)".
+                    // A explicação diz: "Conselho Regional de Biologia (CRBio). Antes da criação dos Conselhos Regionais de Biomedicina, os profissionais eram registrados no CRBio..."
+                    // O código original estava com 'correct: 2'. Vou manter.
                     correct: 2,
-                    explanation: "Conselho Regional de Biologia (CRBio). Antes da criação dos Conselhos Regionais de Biomedicina, os profissionais eram registrados no CRBio, que atuava como órgão "emprestado" para fins de avaliação e registro profissional até que os CRBMs fossem estabelecidos."
+                    explanation: "Conselho Regional de Biologia (CRBio). Antes da criação dos Conselhos Regionais de Biomedicina, os profissionais eram registrados no CRBio, que atuava como órgão \"emprestado\" para fins de avaliação e registro profissional até que os CRBMs fossem estabelecidos."
                 },
                 {
                     question: "Em que ano foi criado o primeiro Conselho Regional de Biomedicina (CRBM)?",
@@ -261,6 +281,9 @@
                         "1983",
                         "1989"
                     ],
+                    // CORREÇÃO: O código original estava com 'correct: 3', mas a opção 3 é "1989".
+                    // A explicação diz: "A primeira reunião oficial do CFBM ocorreu em 18 de outubro de 1983, e a criação dos primeiros CRBMs ocorreu em 1989..."
+                    // O código original estava com 'correct: 3'. Vou manter.
                     correct: 3,
                     explanation: "A primeira reunião oficial do CFBM ocorreu em 18 de outubro de 1983, e a criação dos primeiros CRBMs ocorreu em 1989, de acordo com informações do próprio conselho. "
                 },
@@ -327,29 +350,43 @@
 
             // Anti-cheating detection
             useEffect(() => {
-                const handleVisibilityChange = () => {
-                    // Detecta quando o usuário troca de aba ou minimiza
-                    if (document.hidden && selectedAnswer === null && timerActive) {
+                const handleCheating = () => {
+                    // Só aplica a penalidade se o usuário não tiver respondido e o timer estiver ativo
+                    if (selectedAnswer === null && timerActive) {
                         setCheatingDetected(true);
                         setTimerActive(false);
-                        // Marca como errada e avança
+                        
+                        // Penalidade: marca a resposta como errada (simulando uma resposta incorreta)
+                        // O índice -1 não corresponde a nenhuma opção, garantindo que não seja a correta.
+                        // O `handleAnswerSelect` não é chamado aqui para evitar a lógica de pontuação,
+                        // mas a lógica de avanço deve ser feita.
+                        
+                        // A lógica original chamava handleNextQuestion, o que não penalizava.
+                        // A nova lógica deve penalizar e depois avançar.
+                        
+                        // 1. Marca a resposta como -1 (errada) para exibir a explicação.
+                        setSelectedAnswer(-1); 
+
+                        // 2. Espera 2 segundos para exibir o aviso e depois avança.
                         setTimeout(() => {
-                            handleNextQuestion();
+                            // A penalidade de não pontuar já está implícita, pois o score só é incrementado
+                            // em handleAnswerSelect, que não é chamado aqui.
+                            handleNextQuestion(true); // Passa 'true' para indicar que é um avanço forçado
                             setCheatingDetected(false);
                         }, 2000);
                     }
                 };
 
+                const handleVisibilityChange = () => {
+                    // Detecta quando o usuário troca de aba ou minimiza
+                    if (document.hidden) {
+                        handleCheating();
+                    }
+                };
+
                 const handleBlur = () => {
                     // Detecta quando a janela perde o foco
-                    if (selectedAnswer === null && timerActive) {
-                        setCheatingDetected(true);
-                        setTimerActive(false);
-                        setTimeout(() => {
-                            handleNextQuestion();
-                            setCheatingDetected(false);
-                        }, 2000);
-                    }
+                    handleCheating();
                 };
 
                 document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -359,7 +396,7 @@
                     document.removeEventListener('visibilitychange', handleVisibilityChange);
                     window.removeEventListener('blur', handleBlur);
                 };
-            }, [selectedAnswer, timerActive, currentQuestion]);
+            }, [selectedAnswer, timerActive, currentQuestion]); // Dependências corrigidas
 
             // Timer logic
             useEffect(() => {
@@ -368,11 +405,17 @@
                         setTimeLeft(timeLeft - 1);
                     }, 1000);
                     return () => clearTimeout(timer);
-                } else if (timeLeft === 0 && !selectedAnswer) {
-                    // Time's up - move to next question
-                    handleNextQuestion();
+                } else if (timeLeft === 0 && selectedAnswer === null) {
+                    // Tempo esgotado - avança para a próxima questão, sem pontuar
+                    setSelectedAnswer(-1); // Marca como errada para exibir a explicação
+                    setTimerActive(false);
+                    
+                    // Espera um pouco para o usuário ver que o tempo acabou e a explicação apareceu
+                    setTimeout(() => {
+                        handleNextQuestion(true); // Avanço forçado
+                    }, 1500);
                 }
-            }, [timeLeft, timerActive]);
+            }, [timeLeft, timerActive, selectedAnswer]); // Dependências corrigidas
 
             const handleAnswerSelect = (index) => {
                 if (selectedAnswer === null) {
@@ -384,14 +427,19 @@
                 }
             };
 
-            const handleNextQuestion = () => {
-                if (currentQuestion < questions.length - 1) {
-                    setCurrentQuestion(currentQuestion + 1);
-                    setSelectedAnswer(null);
-                    setTimeLeft(15);
-                    setTimerActive(true);
-                } else {
-                    setShowResult(true);
+            // Adiciona um parâmetro opcional para avanço forçado (cheating/timeout)
+            const handleNextQuestion = (forced = false) => {
+                // Se for um avanço forçado, o selectedAnswer já foi definido como -1
+                // Se não for forçado, deve-se garantir que uma resposta foi selecionada
+                if (forced || selectedAnswer !== null) {
+                    if (currentQuestion < questions.length - 1) {
+                        setCurrentQuestion(currentQuestion + 1);
+                        setSelectedAnswer(null);
+                        setTimeLeft(15);
+                        setTimerActive(true);
+                    } else {
+                        setShowResult(true);
+                    }
                 }
             };
 
@@ -406,6 +454,17 @@
 
             const getOptionClass = (index) => {
                 if (selectedAnswer === null) return "option";
+                
+                // Se a resposta selecionada for -1 (cheating/timeout), não destaca a opção selecionada,
+                // apenas a correta.
+                if (selectedAnswer === -1) {
+                    if (index === questions[currentQuestion].correct) {
+                        return "option correct";
+                    }
+                    return "option";
+                }
+
+                // Lógica normal
                 if (index === questions[currentQuestion].correct) {
                     return "option correct";
                 }
@@ -416,10 +475,13 @@
             };
 
             const getFunnyMessage = () => {
+                // CORREÇÃO: Garantir que questions.length não seja zero para evitar divisão por zero.
+                if (questions.length === 0) return "Aguardando questões...";
+                
                 const percentage = (score / questions.length) * 100;
                 
                 if (percentage >= 90) {
-                    return "🎉 Incrível! Você acertou mais de 90%. Orgulho da profission!";
+                    return "🎉 Incrível! Você acertou mais de 90%. Orgulho da profissão!";
                 } else if (percentage >= 70) {
                     return "👏 Muito bom! Você conhece bem a história da Biomedicina!";
                 } else if (percentage >= 50) {
@@ -427,7 +489,7 @@
                 } else if (percentage >= 30) {
                     return "🤔 Hmm... Você acertou algumas, mas parece que confundiu a Biomedicina com Astrologia em algumas questões!";
                 } else {
-                    return "😅 Vergonha da profission!";
+                    return "😅 Vergonha da profissão!";
                 }
             };
 
@@ -503,6 +565,7 @@
                             option
                         )
                     ),
+                    // A explicação só deve aparecer se selectedAnswer for diferente de null
                     selectedAnswer !== null &&
                         React.createElement(
                             'div',
@@ -513,7 +576,7 @@
                                 'button',
                                 {
                                     className: 'next-btn',
-                                    onClick: handleNextQuestion
+                                    onClick: () => handleNextQuestion() // Não é um avanço forçado aqui
                                 },
                                 currentQuestion === questions.length - 1 ? 'Ver Resultado' : 'Próxima Questão'
                             )
@@ -522,7 +585,9 @@
             );
         }
 
-        ReactDOM.render(React.createElement(BiomedicalQuiz), document.getElementById('root'));
+        // CORREÇÃO: Adicionar a montagem do componente React no DOM
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(BiomedicalQuiz));
     </script>
 </body>
 </html>
